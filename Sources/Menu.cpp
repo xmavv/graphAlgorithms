@@ -2,51 +2,48 @@
 using namespace std;
 #include "../Headers/Menu.h"
 
-//void Menu::start() {
-//    while(true) {
-//        cout<<("--------------------MENU-2--------------------");
-//        cout<<endl<<"wybierz sposob podania danych"<<endl;
-//        cout<<"1. wygeneruj losowo dane o zadanej dlugosci"<<endl;
-//        cout<<"2. wczytaj dane z pliku"<<endl<<endl;
-//        cout<<"lub: "<<endl<<endl;
-//        cout<<"9. wyjdz do menu-1"<<endl;
-//        cout<<"0. wyjdz z programu"<<endl;
-//        cin>>userChoice;
-//
-//        if(userChoice == 1) {
-//            cout<<("podaj rozmiar tablicy ");
-//            cin>>arrayLength;
-//        } if(userChoice == 9) {
-//            break;
-//        }
-//        int arrayCopy[arrayLength];
-//
-//        switch(userChoice) {
-//            case 1:
-//                generateRandomGraph(arrayLength); //global arrayToSort variable changed, so we can work with it
-//
-//                Utilities::copyArray(arrayToSort, arrayCopy, arrayLength);
-//
-//                chooseDensity(arrayCopy);
-//                break;
-//            case 2:
-//                cout<<("podaj nazwe pliku (plik tekstowy musi znajodwac sie w tym samym folderze co plik wykonywalny programu!) ");
-//                cin>>fileName;
-//                loadGraphFromFile(fileName);
-//
-//                Utilities::copyArray(arrayToSort, arrayCopy, arrayLength);
-//
-//                chooseDensity(arrayCopy);
-//                break;
-//            case 9:
-//                return;
-//            case 0:
-//                exit(0);
-//            default:
-//                cerr<<"niepoprawny wybor!"<<endl;
-//        }
-//
-//        if(userChoice == 9) return;
-//    }
-//    if(userChoice == 9) return;
-//}
+Menu::Menu(Graph g) : g(g) {}
+
+void Menu::start() {
+    while(true) {
+        cout<<("--------------------MENU-2--------------------");
+        cout<<endl<<"wybierz sposob podania danych"<<endl;
+        cout<<"1. wygeneruj losowo dane o zadanej dlugosci"<<endl;
+        cout<<"2. wczytaj dane z pliku"<<endl<<endl;
+        cout<<"lub: "<<endl<<endl;
+        cout<<"9. wyjdz do menu-1"<<endl;
+        cout<<"0. wyjdz z programu"<<endl;
+        cin>>userChoice;
+        if(userChoice == 9) return;
+
+        if(userChoice == 1) {
+            cout << "podaj liczbe wierzchołków" << endl;
+            cin >> numberOfVertices;
+
+            Graph g(numberOfVertices);
+            this -> g = g;
+        } else if (userChoice == 2) {
+            cout<<"podaj nazwe pliku"<<endl;
+        } else {
+            cout<<"niepoprawny wybor!";
+            continue;
+        }
+    }
+}
+
+void Menu::generateGraph() {
+    float density;
+    int maxWeight;
+
+    cout<<"podaj gestosc a nastepnie max wage krawedzi"<<endl;
+    cin>>density;
+    cin>>maxWeight;
+    g.generateRandomGraph(density, maxWeight);
+}
+
+void Menu::printGraph() {
+    cout<<"twoj graf wyglada tak o"<<endl;
+
+    g.printIncidenceMatrix();
+    g.printAdjList();
+}

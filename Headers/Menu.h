@@ -1,17 +1,19 @@
 #ifndef GRAPHALGORITHMS_MENU_Ht
 #define GRAPHALGORITHMS_MENU_H
+#include "../Headers/Graph.h"
 
 
 class Menu {
     int userChoice;
+    int numberOfVertices;
     string fileName;
-
-    void generateRandomGraph();
-    void loadGraphFromFile(string name);
-    void chooseDensity();
+    Graph g;
 
 public:
+    Menu(Graph g);
     void start();
+    void generateGraph();
+    void printGraph();
 };
 
 
