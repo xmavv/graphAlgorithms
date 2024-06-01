@@ -1,3 +1,7 @@
 # ninja log v5
 0	991	7388764166856264	CMakeFiles/graphAlgorithms.dir/main.cpp.obj	a7095e34e1681ee
 995	1414	7388764171033961	graphAlgorithms.exe	dd6a032273d4c2d0
+44	1569	7388954871876201	CMakeFiles/graphAlgorithms.dir/Sources/Graph.cpp.obj	730e33379b102d80
+6	1861	7388954874817923	CMakeFiles/graphAlgorithms.dir/main.cpp.obj	a7095e34e1681ee
+7	1514	7388955153445232	CMakeFiles/graphAlgorithms.dir/Sources/Menu.cpp.obj	df6334ff428968ac
+1515	2181	7388955160297422	graphAlgorithms.exe	47d4e649164e2b45
