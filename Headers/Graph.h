@@ -17,6 +17,8 @@ private:
     int** incidenceMatrix; // macierz incydencji
     void addEdgeList(int u, int v, int weight);
     void addEdgeMatrix(int u, int v, int cost);
+    int findSet(int i, int* parent);
+    void unionSets(int u, int v, int* parent, int* rank);
 
 public:
     Graph(int V);
@@ -25,6 +27,10 @@ public:
     void printAdjList();
     void printIncidenceMatrix();
     void loadGraphFromFile();
+    void primMST();
+    void kruskalMST();
+    void bellmanFordDFS(int src);
+    void dijkstryDFS(int src);
 };
 
 

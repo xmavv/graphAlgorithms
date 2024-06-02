@@ -8,12 +8,13 @@ class Menu {
     int numberOfVertices;
     string fileName;
     Graph g;
+    void generateGraph();
+    void printGraph();
+    void chooseAlgorithm();
 
 public:
     Menu(Graph g);
     void start();
-    void generateGraph();
-    void printGraph();
 };
 
 
