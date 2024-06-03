@@ -1,6 +1,7 @@
 #include "iostream"
 using namespace std;
 #include "Headers/Menu.h"
+#include "Headers/Utilities.h"
 int main() {
 
     Menu menu(Graph(0));

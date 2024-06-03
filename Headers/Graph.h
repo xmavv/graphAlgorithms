@@ -15,8 +15,6 @@ private:
     pair<int, int>** adjList; // lista następników
     int* listSizes; // rozmiary list następników
     int** incidenceMatrix; // macierz incydencji
-    void addEdgeList(int u, int v, int weight);
-    void addEdgeMatrix(int u, int v, int cost);
     int findSet(int i, int* parent);
     void unionSets(int u, int v, int* parent, int* rank);
 
@@ -26,7 +24,9 @@ public:
     void generateRandomGraph(float density, int maxCost);
     void printAdjList();
     void printIncidenceMatrix();
-    void loadGraphFromFile();
+    void addEdgeList(int u, int v, int weight);
+    void addEdgeMatrix(int u, int v, int cost);
+    void loadGraphFromFile(string filename);
     void primMST();
     void kruskalMST();
     void bellmanFordDFS(int src);

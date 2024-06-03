@@ -24,7 +24,8 @@ void Menu::start() {
             generateGraph();
             chooseAlgorithm();
         } else if (userChoice == 2) {
-            cout<<"podaj nazwe pliku"<<endl;
+            loadFromFile();
+            chooseAlgorithm();
         } else {
             cout<<"niepoprawny wybor!"<<endl;
             continue;
@@ -92,4 +93,11 @@ void Menu::chooseAlgorithm() {
             continue;
         }
     }
+}
+
+void Menu::loadFromFile() {
+    cout<<"podaj nazwe pliku"<<endl;
+    cin>>filename;
+
+    g.loadGraphFromFile(filename);
 }

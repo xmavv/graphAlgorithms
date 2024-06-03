@@ -1,4 +1,5 @@
 #include "../Headers/Graph.h"
+#include "../Headers/Utilities.h"
 
 Graph::Graph(int V) {
     this -> V = V;
@@ -70,6 +71,45 @@ void Graph::generateRandomGraph(float density, int maxCost){
             addEdgeMatrix(u, v, cost);
             edgeCount++;
         }
+    }
+}
+
+void Graph::loadGraphFromFile(string filename) {
+    int edgeNumber;
+    int vertivesNumber;
+
+    int initialVertex;
+    int finalVertex;
+    int weight;
+
+    fstream file;
+    file.open(filename, ios::in);
+
+    if(!file.is_open()) {
+        cout<<"nie udalo sie otworzyc pliku!"<<endl;
+        exit(0);
+    }
+
+    string line;
+
+    if(getline(file, line)) {
+        int *array = Utilities::split(line, 2);
+
+        edgeNumber = array[0];
+        vertivesNumber = array[1];
+    }
+
+    while(getline(file, line)) {
+        int *array = Utilities::split(line, 3);
+        initialVertex = array[0];
+        finalVertex = array[1];
+        weight = array[2];
+
+        //TUTAJ TRZEBA KONSTRUKTOR WYWOLAC DLA TEGO GRAFU TYLE ILE MA TYCH WIERZCHOLKOW NIE
+        this->V = vertivesNumber;
+
+        this->addEdgeList(initialVertex, finalVertex, weight);
+        this->addEdgeMatrix(initialVertex, finalVertex, weight);
     }
 }
 

@@ -67,6 +67,12 @@ build CMakeFiles/graphAlgorithms.dir/Sources/Graph.cpp.obj: CXX_COMPILER__graphA
   OBJECT_DIR = CMakeFiles\graphAlgorithms.dir
   OBJECT_FILE_DIR = CMakeFiles\graphAlgorithms.dir\Sources
 
+build CMakeFiles/graphAlgorithms.dir/Sources/Utilities.cpp.obj: CXX_COMPILER__graphAlgorithms_unscanned_Debug C$:/Users/mrmat/CLionProjects/graphAlgorithms/Sources/Utilities.cpp || cmake_object_order_depends_target_graphAlgorithms
+  DEP_FILE = CMakeFiles\graphAlgorithms.dir\Sources\Utilities.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\graphAlgorithms.dir
+  OBJECT_FILE_DIR = CMakeFiles\graphAlgorithms.dir\Sources
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target graphAlgorithms
@@ -75,7 +81,7 @@ build CMakeFiles/graphAlgorithms.dir/Sources/Graph.cpp.obj: CXX_COMPILER__graphA
 #############################################
 # Link the executable graphAlgorithms.exe
 
-build graphAlgorithms.exe: CXX_EXECUTABLE_LINKER__graphAlgorithms_Debug CMakeFiles/graphAlgorithms.dir/main.cpp.obj CMakeFiles/graphAlgorithms.dir/Sources/Menu.cpp.obj CMakeFiles/graphAlgorithms.dir/Sources/Graph.cpp.obj
+build graphAlgorithms.exe: CXX_EXECUTABLE_LINKER__graphAlgorithms_Debug CMakeFiles/graphAlgorithms.dir/main.cpp.obj CMakeFiles/graphAlgorithms.dir/Sources/Menu.cpp.obj CMakeFiles/graphAlgorithms.dir/Sources/Graph.cpp.obj CMakeFiles/graphAlgorithms.dir/Sources/Utilities.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\graphAlgorithms.dir
