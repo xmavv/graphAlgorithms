@@ -3,7 +3,10 @@
 
 Graph::Graph(int V) {
     this -> V = V;
+    this -> initGraph(V);
+}
 
+void Graph::initGraph(int V) {
     adjList = new pair<int, int>*[V]; // alokowanie tablicy wskaźników dla listy sąsiedztwa
     listSizes = new int[V](); // alokowanie i inicjalizacja tablicy rozmiarów list na 0
     for (int i = 0; i < V; ++i) {
@@ -38,8 +41,8 @@ void Graph::addEdgeList(int u, int v, int weight) {
     listSizes[u]++;
 }
 
-void Graph::addEdgeMatrix(int u, int v, int cost) {
-    incidenceMatrix[u][v] = cost;
+void Graph::addEdgeMatrix(int u, int v, int weight) {
+    incidenceMatrix[u][v] = weight;
 }
 
 void Graph::generateRandomGraph(float density, int maxCost){
@@ -95,8 +98,10 @@ void Graph::loadGraphFromFile(string filename) {
     if(getline(file, line)) {
         int *array = Utilities::split(line, 2);
 
-        edgeNumber = array[0];
-        vertivesNumber = array[1];
+        vertivesNumber = array[0];
+        edgeNumber = array[1];
+        this->V = vertivesNumber;
+        this->initGraph(vertivesNumber);
     }
 
     while(getline(file, line)) {
@@ -104,9 +109,6 @@ void Graph::loadGraphFromFile(string filename) {
         initialVertex = array[0];
         finalVertex = array[1];
         weight = array[2];
-
-        //TUTAJ TRZEBA KONSTRUKTOR WYWOLAC DLA TEGO GRAFU TYLE ILE MA TYCH WIERZCHOLKOW NIE
-        this->V = vertivesNumber;
 
         this->addEdgeList(initialVertex, finalVertex, weight);
         this->addEdgeMatrix(initialVertex, finalVertex, weight);

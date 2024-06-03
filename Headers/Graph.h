@@ -17,6 +17,7 @@ private:
     int** incidenceMatrix; // macierz incydencji
     int findSet(int i, int* parent);
     void unionSets(int u, int v, int* parent, int* rank);
+    void initGraph(int V);
 
 public:
     Graph(int V);
