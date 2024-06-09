@@ -73,19 +73,77 @@ void Menu::chooseAlgorithm() {
         if(userChoice == 9) return;
         if(userChoice == 0) exit(0);
 
-        if(userChoice == 1) g.primMST();
-        else if(userChoice == 2) g.kruskalMST();
-        else if(userChoice == 3) {
-            cout<<"podaj dla ktorego wierzcholka chcesz znalezc najkrotsza droge"<<endl;
+        if(userChoice == 1) {
+            cout<<"1. lista"<<endl;
+            cout<<"2. macierz"<<endl;
             cin>>userChoice;
 
-            g.bellmanFordDFS(userChoice);
+            if(userChoice == 1) g.primMSTList();
+            if(userChoice == 2) g.primMSTMatrix();
+            else {
+                cout<<"niepoprawny wybor"<<endl;
+                continue;
+            }
+        }
+        else if(userChoice == 2) {
+            cout<<"1. lista"<<endl;
+            cout<<"2. macierz"<<endl;
+            cin>>userChoice;
+
+            if(userChoice == 1) g.kruskalMSTList();
+            if(userChoice == 2) g.kruskalMSTMatrix();
+            else {
+                cout<<"niepoprawny wybor"<<endl;
+                continue;
+            }
+        }
+        else if(userChoice == 3) {
+            cout<<"1. lista"<<endl;
+            cout<<"2. macierz"<<endl;
+            cin>>userChoice;
+
+            if(userChoice == 1) {
+                cout<<"podaj dla ktorego wierzcholka chcesz znalezc najkrotsza droge"<<endl;
+                cin>>userChoice;
+
+                g.bellmanFordSPList(userChoice);
+                continue;
+            }
+            if(userChoice == 2) {
+                cout<<"podaj dla ktorego wierzcholka chcesz znalezc najkrotsza droge"<<endl;
+                cin>>userChoice;
+
+                g.bellmanFordSPMatrix(userChoice);
+                continue;
+            }
+            else {
+                cout<<"niepoprawny wybor"<<endl;
+                continue;
+            }
         }
         else if(userChoice == 4) {
-            cout<<"podaj dla ktorego wierzcholka chcesz znalezc najkrotsza droge"<<endl;
+            cout<<"1. lista"<<endl;
+            cout<<"2. macierz"<<endl;
             cin>>userChoice;
 
-            g.dijkstryDFS(userChoice);
+            if(userChoice == 1) {
+                cout<<"podaj dla ktorego wierzcholka chcesz znalezc najkrotsza droge"<<endl;
+                cin>>userChoice;
+
+                g.dijkstraSPList(userChoice);
+                continue;
+            }
+            if(userChoice == 2) {
+                cout<<"podaj dla ktorego wierzcholka chcesz znalezc najkrotsza droge"<<endl;
+                cin>>userChoice;
+
+                g.dijkstraSPMatrix(userChoice);
+                continue;
+            }
+            else {
+                cout<<"niepoprawny wybor"<<endl;
+                continue;
+            }
         }
         else if(userChoice == 5) printGraph();
         else {

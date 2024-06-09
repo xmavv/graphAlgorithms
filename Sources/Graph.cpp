@@ -1,36 +1,37 @@
 #include "../Headers/Graph.h"
 #include "../Headers/Utilities.h"
+#include <algorithm>
 
 Graph::Graph(int V) {
-    this -> V = V;
-    this -> initGraph(V);
+    this->V = V;
+    this->initGraph(V);
 }
 
 void Graph::initGraph(int V) {
-    adjList = new pair<int, int>*[V]; // alokowanie tablicy wskaźników dla listy sąsiedztwa
-    listSizes = new int[V](); // alokowanie i inicjalizacja tablicy rozmiarów list na 0
+    adjList = new pair<int, int>*[V];
+    listSizes = new int[V]();
     for (int i = 0; i < V; ++i) {
-        adjList[i] = nullptr; // początkowo wskaźniki są puste
+        adjList[i] = nullptr;
     }
 
-    incidenceMatrix = new int*[V]; // alokowanie tablicy wskaźników do macierzy incydencji
+    incidenceMatrix = new int*[V];
     for (int i = 0; i < V; ++i) {
-        incidenceMatrix[i] = new int[V](); // alokowanie tablicy int dla każdego wierzchołka i inicjalizacja zerami
+        incidenceMatrix[i] = new int[0]();
     }
+    edgeCount = 0;
 }
 
 Graph::~Graph() {
     for (int i = 0; i < V; ++i) {
-        delete[] adjList[i]; // zwalnianie pamięci dla każdej tablicy sąsiedztwa
-        delete[] incidenceMatrix[i]; // zwalnianie pamięci dla każdej tablicy w macierzy incydencji
+        delete[] adjList[i];
+        delete[] incidenceMatrix[i];
     }
-    delete[] adjList; // zwalnianie pamięci dla tablicy wskaźników
-    delete[] incidenceMatrix; // zwalnianie pamięci dla tablicy wskaźników
-    delete[] listSizes; // zwalnianie pamięci dla tablicy rozmiarów list
+    delete[] adjList;
+    delete[] incidenceMatrix;
+    delete[] listSizes;
 }
 
 void Graph::addEdgeList(int u, int v, int weight) {
-    // Zwiększenie rozmiaru listy sąsiedztwa dla wierzchołka u
     pair<int, int>* newAdjU = new pair<int, int>[listSizes[u] + 1];
     for (int i = 0; i < listSizes[u]; ++i) {
         newAdjU[i] = adjList[u][i];
@@ -42,19 +43,30 @@ void Graph::addEdgeList(int u, int v, int weight) {
 }
 
 void Graph::addEdgeMatrix(int u, int v, int weight) {
-    incidenceMatrix[u][v] = weight;
+    for (int i = 0; i < V; ++i) {
+        int* newRow = new int[edgeCount + 1];
+        for (int j = 0; j < edgeCount; ++j) {
+            newRow[j] = incidenceMatrix[i][j];
+        }
+        newRow[edgeCount] = 0;
+        delete[] incidenceMatrix[i];
+        incidenceMatrix[i] = newRow;
+    }
+
+    incidenceMatrix[u][edgeCount] = weight;
+    incidenceMatrix[v][edgeCount] = -weight;
+    edgeCount++;
 }
 
-void Graph::generateRandomGraph(float density, int maxCost){
+void Graph::generateRandomGraph(float density, int maxCost) {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dist(1, maxCost);
 
     int edgeCount = 0;
-    int maxEdges = V * (V - 1);
+    int maxEdges = V * (V - 1) / 2;
     int requiredEdges = density * maxEdges;
 
-    // Generowanie drzewa rozpinającego
     for (int i = 1; i < V; ++i) {
         int u = i;
         int v = rand() % i;
@@ -64,7 +76,6 @@ void Graph::generateRandomGraph(float density, int maxCost){
         edgeCount++;
     }
 
-    // Dodawanie pozostałych krawędzi
     while (edgeCount < requiredEdges) {
         int u = rand() % V;
         int v = rand() % V;
@@ -79,7 +90,7 @@ void Graph::generateRandomGraph(float density, int maxCost){
 
 void Graph::loadGraphFromFile(string filename) {
     int edgeNumber;
-    int vertivesNumber;
+    int verticesNumber;
 
     int initialVertex;
     int finalVertex;
@@ -88,24 +99,24 @@ void Graph::loadGraphFromFile(string filename) {
     fstream file;
     file.open(filename, ios::in);
 
-    if(!file.is_open()) {
-        cout<<"nie udalo sie otworzyc pliku!"<<endl;
+    if (!file.is_open()) {
+        cout << "Failed to open file!" << endl;
         exit(0);
     }
 
     string line;
 
-    if(getline(file, line)) {
-        int *array = Utilities::split(line, 2);
+    if (getline(file, line)) {
+        int* array = Utilities::split(line, 2);
 
-        vertivesNumber = array[0];
+        verticesNumber = array[0];
         edgeNumber = array[1];
-        this->V = vertivesNumber;
-        this->initGraph(vertivesNumber);
+        this->V = verticesNumber;
+        this->initGraph(verticesNumber);
     }
 
-    while(getline(file, line)) {
-        int *array = Utilities::split(line, 3);
+    while (getline(file, line)) {
+        int* array = Utilities::split(line, 3);
         initialVertex = array[0];
         finalVertex = array[1];
         weight = array[2];
@@ -116,7 +127,7 @@ void Graph::loadGraphFromFile(string filename) {
 }
 
 void Graph::printAdjList() {
-    cout<<endl<<"Lista nastepnikow"<<endl<<endl;
+    cout << endl << "Adjacency List" << endl << endl;
     for (int i = 0; i < V; ++i) {
         cout << i << ": ";
         for (int j = 0; j < listSizes[i]; ++j) {
@@ -127,12 +138,14 @@ void Graph::printAdjList() {
 }
 
 void Graph::printIncidenceMatrix() {
-    cout<<endl<<"Macierz incydencji"<<endl<<endl;
+    cout << endl << "Incidence Matrix" << endl << endl;
     for (int i = 0; i < V; ++i) {
-        for (int j = 0; j < V; ++j) {
+        for (int j = 0; j < edgeCount; ++j) {
             int currNumber = incidenceMatrix[i][j];
 
-            if(currNumber <= 9) {
+            if(currNumber < 0) {
+                cout<<currNumber<<"  ";
+            } else if(currNumber <= 9) {
                 cout << " " << currNumber << " "<< " ";
             } else if(currNumber >= 9 && currNumber < 100) {
                 cout << " " << currNumber<< " ";
@@ -144,58 +157,14 @@ void Graph::printIncidenceMatrix() {
     }
 }
 
-void Graph::primMST() {
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-    int* key = new int[V];
-    int* parent = new int[V];
-    bool* inMST = new bool[V];
-
-    for (int i = 0; i < V; ++i) {
-        key[i] = INT_MAX;
-        parent[i] = -1;
-        inMST[i] = false;
+int Graph::findSet(int u, int parent[]) {
+    if (u != parent[u]) {
+        parent[u] = findSet(parent[u], parent);
     }
-
-    int src = 0;
-    pq.push({0, src});
-    key[src] = 0;
-
-    while (!pq.empty()) {
-        int u = pq.top().second;
-        pq.pop();
-
-        inMST[u] = true;
-
-        for (int i = 0; i < listSizes[u]; ++i) {
-            int v = adjList[u][i].first;
-            int weight = adjList[u][i].second;
-
-            if (!inMST[v] && key[v] > weight) {
-                key[v] = weight;
-                pq.push({key[v], v});
-                parent[v] = u;
-            }
-        }
-    }
-
-    cout << "MST using Prim's Algorithm:" << endl;
-    for (int i = 1; i < V; ++i) {
-        cout << parent[i] << " - " << i << endl;
-    }
-
-    delete[] key;
-    delete[] parent;
-    delete[] inMST;
+    return parent[u];
 }
 
-int Graph::findSet(int i, int* parent) {
-    if (i == parent[i]) {
-        return i;
-    }
-    return parent[i] = findSet(parent[i], parent);
-}
-
-void Graph::unionSets(int u, int v, int* parent, int* rank) {
+void Graph::unionSets(int u, int v, int parent[], int rank[]) {
     int rootU = findSet(u, parent);
     int rootV = findSet(v, parent);
 
@@ -211,7 +180,109 @@ void Graph::unionSets(int u, int v, int* parent, int* rank) {
     }
 }
 
-void Graph::kruskalMST() {
+void Graph::primMSTList() {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    int* key = new int[V];
+    int* parent = new int[V];
+    bool* inMST = new bool[V];
+
+    for (int i = 0; i < V; ++i) {
+        key[i] = INT_MAX;
+        parent[i] = -1;
+        inMST[i] = false;
+    }
+
+    int src = 0;
+    pq.push({0, src});
+    key[src] = 0;
+
+    int totalWeight = 0;
+
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
+
+        if (inMST[u]) continue;
+
+        inMST[u] = true;
+        totalWeight += key[u];
+
+        for (int i = 0; i < listSizes[u]; ++i) {
+            int v = adjList[u][i].first;
+            int weight = adjList[u][i].second;
+
+            if (!inMST[v] && key[v] > weight) {
+                key[v] = weight;
+                pq.push({key[v], v});
+                parent[v] = u;
+            }
+        }
+    }
+
+    cout << "MST using Prim's Algorithm (Adjacency List):" << endl;
+    for (int i = 1; i < V; ++i) {
+        cout << parent[i] << " - " << i << endl;
+    }
+    cout << "Total weight: " << totalWeight << endl;
+
+    delete[] key;
+    delete[] parent;
+    delete[] inMST;
+}
+
+void Graph::primMSTMatrix() {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    int* key = new int[V];
+    int* parent = new int[V];
+    bool* inMST = new bool[V];
+
+    for (int i = 0; i < V; ++i) {
+        key[i] = INT_MAX;
+        parent[i] = -1;
+        inMST[i] = false;
+    }
+
+    int src = 0;
+    pq.push({0, src});
+    key[src] = 0;
+
+    int totalWeight = 0;
+
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
+
+        if (inMST[u]) continue;
+
+        inMST[u] = true;
+        totalWeight += key[u];
+
+        for (int v = 0; v < edgeCount; ++v) {
+            int weight = incidenceMatrix[u][v];
+            if (weight > 0) {
+                for (int w = 0; w < V; ++w) {
+                    if (w != u && incidenceMatrix[w][v] == -weight && !inMST[w] && key[w] > weight) {
+                        key[w] = weight;
+                        pq.push({key[w], w});
+                        parent[w] = u;
+                    }
+                }
+            }
+        }
+    }
+
+    cout << "MST using Prim's Algorithm (Incidence Matrix):" << endl;
+    for (int i = 1; i < V; ++i) {
+        cout << parent[i] << " - " << i << endl;
+    }
+    cout << "Total weight: " << totalWeight << endl;
+
+    delete[] key;
+    delete[] parent;
+    delete[] inMST;
+}
+
+void Graph::kruskalMSTList() {
     pair<int, pair<int, int>>* edges = new pair<int, pair<int, int>>[V * V];
     int edgeCount = 0;
 
@@ -231,7 +302,9 @@ void Graph::kruskalMST() {
         parent[i] = i;
     }
 
-    cout << "MST using Kruskal's Algorithm:" << endl;
+    int totalWeight = 0;
+
+    cout << "MST using Kruskal's Algorithm (Adjacency List):" << endl;
     for (int i = 0; i < edgeCount; ++i) {
         int u = edges[i].second.first;
         int v = edges[i].second.second;
@@ -239,16 +312,69 @@ void Graph::kruskalMST() {
 
         if (findSet(u, parent) != findSet(v, parent)) {
             cout << u << " - " << v << " : " << weight << endl;
+            totalWeight += weight;
             unionSets(u, v, parent, rank);
         }
     }
+    cout << "Total weight: " << totalWeight << endl;
 
     delete[] edges;
     delete[] parent;
     delete[] rank;
 }
 
-void Graph::dijkstryDFS(int src) {
+void Graph::kruskalMSTMatrix() {
+    pair<int, pair<int, int>>* edges = new pair<int, pair<int, int>>[edgeCount];
+    int edgeIndex = 0;
+
+    for (int v = 0; v < edgeCount; ++v) {
+        for (int u = 0; u < V; ++u) {
+            if (incidenceMatrix[u][v] > 0) {
+                int weight = incidenceMatrix[u][v];
+                int w = -1;
+                for (int k = 0; k < V; ++k) {
+                    if (incidenceMatrix[k][v] == -weight) {
+                        w = k;
+                        break;
+                    }
+                }
+                if (w != -1) {
+                    edges[edgeIndex++] = {weight, {u, w}};
+                }
+            }
+        }
+    }
+
+    sort(edges, edges + edgeIndex);
+
+    int* parent = new int[V];
+    int* rank = new int[V]();
+    for (int i = 0; i < V; ++i) {
+        parent[i] = i;
+    }
+
+    int totalWeight = 0;
+
+    cout << "MST using Kruskal's Algorithm (Incidence Matrix):" << endl;
+    for (int i = 0; i < edgeIndex; ++i) {
+        int u = edges[i].second.first;
+        int v = edges[i].second.second;
+        int weight = edges[i].first;
+
+        if (findSet(u, parent) != findSet(v, parent)) {
+            cout << u << " - " << v << " : " << weight << endl;
+            totalWeight += weight;
+            unionSets(u, v, parent, rank);
+        }
+    }
+    cout << "Total weight: " << totalWeight << endl;
+
+    delete[] edges;
+    delete[] parent;
+    delete[] rank;
+}
+
+void Graph::dijkstraSPList(int src) {
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* dist = new int[V];
     bool* visited = new bool[V];
@@ -280,7 +406,7 @@ void Graph::dijkstryDFS(int src) {
         }
     }
 
-    cout << "Shortest paths using Dijkstra's Algorithm from vertex " << src << ":" << endl;
+    cout << "Shortest paths using Dijkstra's Algorithm from vertex " << src << " (Adjacency List):" << endl;
     for (int i = 0; i < V; ++i) {
         cout << "Vertex " << i << " : " << dist[i] << endl;
     }
@@ -289,7 +415,50 @@ void Graph::dijkstryDFS(int src) {
     delete[] visited;
 }
 
-void Graph::bellmanFordDFS(int src) {
+void Graph::dijkstraSPMatrix(int src) {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    int* dist = new int[V];
+    bool* visited = new bool[V];
+
+    for (int i = 0; i < V; ++i) {
+        dist[i] = INT_MAX;
+        visited[i] = false;
+    }
+
+    pq.push({0, src});
+    dist[src] = 0;
+
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
+
+        if (visited[u]) continue;
+
+        visited[u] = true;
+
+        for (int v = 0; v < edgeCount; ++v) {
+            if (incidenceMatrix[u][v] > 0) {
+                int weight = incidenceMatrix[u][v];
+                for (int w = 0; w < V; ++w) {
+                    if (w != u && incidenceMatrix[w][v] == -weight && !visited[w] && dist[u] + weight < dist[w]) {
+                        dist[w] = dist[u] + weight;
+                        pq.push({dist[w], w});
+                    }
+                }
+            }
+        }
+    }
+
+    cout << "Shortest paths using Dijkstra's Algorithm from vertex " << src << " (Incidence Matrix):" << endl;
+    for (int i = 0; i < V; ++i) {
+        cout << "Vertex " << i << " : " << dist[i] << endl;
+    }
+
+    delete[] dist;
+    delete[] visited;
+}
+
+void Graph::bellmanFordSPList(int src) {
     int* dist = new int[V];
 
     for (int i = 0; i < V; ++i) {
@@ -323,7 +492,53 @@ void Graph::bellmanFordDFS(int src) {
         }
     }
 
-    cout << "Shortest paths using Bellman-Ford Algorithm from vertex " << src << ":" << endl;
+    cout << "Shortest paths using Bellman-Ford Algorithm from vertex " << src << " (Adjacency List):" << endl;
+    for (int i = 0; i < V; ++i) {
+        cout << "Vertex " << i << " : " << dist[i] << endl;
+    }
+
+    delete[] dist;
+}
+
+void Graph::bellmanFordSPMatrix(int src) {
+    int* dist = new int[V];
+
+    for (int i = 0; i < V; ++i) {
+        dist[i] = INT_MAX;
+    }
+    dist[src] = 0;
+
+    for (int i = 1; i < V; ++i) {
+        for (int v = 0; v < edgeCount; ++v) {
+            for (int u = 0; u < V; ++u) {
+                if (incidenceMatrix[u][v] > 0) {
+                    int weight = incidenceMatrix[u][v];
+                    for (int w = 0; w < V; ++w) {
+                        if (incidenceMatrix[w][v] == -weight && dist[u] != INT_MAX && dist[u] + weight < dist[w]) {
+                            dist[w] = dist[u] + weight;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for (int v = 0; v < edgeCount; ++v) {
+        for (int u = 0; u < V; ++u) {
+            if (incidenceMatrix[u][v] > 0) {
+                int weight = incidenceMatrix[u][v];
+                for (int w = 0; w < V; ++ w) {
+                    if (incidenceMatrix[w][v] == -weight && dist[u] != INT_MAX && dist[u] + weight < dist[w]) {
+                        cout << "Graph contains negative weight cycle" << endl;
+                        delete[] dist;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    cout << "Shortest paths using Bellman-Ford Algorithm from vertex " << src << " (Incidence Matrix):" << endl;
     for (int i = 0; i < V; ++i) {
         cout << "Vertex " << i << " : " << dist[i] << endl;
     }

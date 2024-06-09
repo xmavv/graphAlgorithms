@@ -12,6 +12,7 @@ using namespace std;
 class Graph {
 private:
     int V; // liczba wierzchołków
+    int edgeCount;
     pair<int, int>** adjList; // lista następników
     int* listSizes; // rozmiary list następników
     int** incidenceMatrix; // macierz incydencji
@@ -28,10 +29,14 @@ public:
     void addEdgeList(int u, int v, int weight);
     void addEdgeMatrix(int u, int v, int cost);
     void loadGraphFromFile(string filename);
-    void primMST();
-    void kruskalMST();
-    void bellmanFordDFS(int src);
-    void dijkstryDFS(int src);
+    void primMSTList();
+    void primMSTMatrix();
+    void kruskalMSTList();
+    void kruskalMSTMatrix();
+    void bellmanFordSPList(int src);
+    void bellmanFordSPMatrix(int src);
+    void dijkstraSPMatrix(int src);
+    void dijkstraSPList(int src);
 };
 
 
