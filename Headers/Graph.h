@@ -6,6 +6,7 @@
 #include <chrono>
 #include <queue>
 #include <algorithm>
+#include "Utilities.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ private:
     int findSet(int i, int* parent);
     void unionSets(int u, int v, int* parent, int* rank);
     void initGraph(int V);
+    Utilities u;
 
 public:
     Graph(int V);

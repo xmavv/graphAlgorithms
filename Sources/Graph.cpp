@@ -1,5 +1,6 @@
 #include "../Headers/Graph.h"
 #include "../Headers/Utilities.h"
+#include "time.h"
 #include <algorithm>
 
 Graph::Graph(int V) {
@@ -181,6 +182,8 @@ void Graph::unionSets(int u, int v, int parent[], int rank[]) {
 }
 
 void Graph::primMSTList() {
+    u.startCounter();
+
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* key = new int[V];
     int* parent = new int[V];
@@ -219,11 +222,14 @@ void Graph::primMSTList() {
         }
     }
 
+    double stop = u.getCounter();
+
     cout << "MST using Prim's Algorithm (Adjacency List):" << endl;
     for (int i = 1; i < V; ++i) {
         cout << parent[i] << " - " << i << endl;
     }
     cout << "Total weight: " << totalWeight << endl;
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] key;
     delete[] parent;
@@ -231,6 +237,8 @@ void Graph::primMSTList() {
 }
 
 void Graph::primMSTMatrix() {
+    u.startCounter();
+
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* key = new int[V];
     int* parent = new int[V];
@@ -271,11 +279,14 @@ void Graph::primMSTMatrix() {
         }
     }
 
+    double stop = u.getCounter();
+
     cout << "MST using Prim's Algorithm (Incidence Matrix):" << endl;
     for (int i = 1; i < V; ++i) {
         cout << parent[i] << " - " << i << endl;
     }
     cout << "Total weight: " << totalWeight << endl;
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] key;
     delete[] parent;
@@ -283,6 +294,8 @@ void Graph::primMSTMatrix() {
 }
 
 void Graph::kruskalMSTList() {
+    u.startCounter();
+
     pair<int, pair<int, int>>* edges = new pair<int, pair<int, int>>[V * V];
     int edgeCount = 0;
 
@@ -316,7 +329,10 @@ void Graph::kruskalMSTList() {
             unionSets(u, v, parent, rank);
         }
     }
+    double stop = u.getCounter();
+
     cout << "Total weight: " << totalWeight << endl;
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] edges;
     delete[] parent;
@@ -324,6 +340,8 @@ void Graph::kruskalMSTList() {
 }
 
 void Graph::kruskalMSTMatrix() {
+    u.startCounter();
+
     pair<int, pair<int, int>>* edges = new pair<int, pair<int, int>>[edgeCount];
     int edgeIndex = 0;
 
@@ -367,7 +385,10 @@ void Graph::kruskalMSTMatrix() {
             unionSets(u, v, parent, rank);
         }
     }
+    double stop = u.getCounter();
+
     cout << "Total weight: " << totalWeight << endl;
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] edges;
     delete[] parent;
@@ -375,6 +396,8 @@ void Graph::kruskalMSTMatrix() {
 }
 
 void Graph::dijkstraSPList(int src) {
+    u.startCounter();
+
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* dist = new int[V];
     bool* visited = new bool[V];
@@ -405,17 +428,21 @@ void Graph::dijkstraSPList(int src) {
             }
         }
     }
+    double stop = u.getCounter();
 
     cout << "Shortest paths using Dijkstra's Algorithm from vertex " << src << " (Adjacency List):" << endl;
     for (int i = 0; i < V; ++i) {
         cout << "Vertex " << i << " : " << dist[i] << endl;
     }
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] dist;
     delete[] visited;
 }
 
 void Graph::dijkstraSPMatrix(int src) {
+    u.startCounter();
+
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* dist = new int[V];
     bool* visited = new bool[V];
@@ -448,17 +475,21 @@ void Graph::dijkstraSPMatrix(int src) {
             }
         }
     }
+    double stop = u.getCounter();
 
     cout << "Shortest paths using Dijkstra's Algorithm from vertex " << src << " (Incidence Matrix):" << endl;
     for (int i = 0; i < V; ++i) {
         cout << "Vertex " << i << " : " << dist[i] << endl;
     }
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] dist;
     delete[] visited;
 }
 
 void Graph::bellmanFordSPList(int src) {
+    u.startCounter();
+
     int* dist = new int[V];
 
     for (int i = 0; i < V; ++i) {
@@ -491,16 +522,20 @@ void Graph::bellmanFordSPList(int src) {
             }
         }
     }
+    double stop = u.getCounter();
 
     cout << "Shortest paths using Bellman-Ford Algorithm from vertex " << src << " (Adjacency List):" << endl;
     for (int i = 0; i < V; ++i) {
         cout << "Vertex " << i << " : " << dist[i] << endl;
     }
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] dist;
 }
 
 void Graph::bellmanFordSPMatrix(int src) {
+    u.startCounter();
+
     int* dist = new int[V];
 
     for (int i = 0; i < V; ++i) {
@@ -537,11 +572,13 @@ void Graph::bellmanFordSPMatrix(int src) {
             }
         }
     }
+    double stop = u.getCounter();
 
     cout << "Shortest paths using Bellman-Ford Algorithm from vertex " << src << " (Incidence Matrix):" << endl;
     for (int i = 0; i < V; ++i) {
         cout << "Vertex " << i << " : " << dist[i] << endl;
     }
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] dist;
 }
