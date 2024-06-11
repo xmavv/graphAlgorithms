@@ -146,6 +146,7 @@ void Graph::loadGraphFromFile(string filename) {
         verticesNumber = array[0];
         edgeNumber = array[1];
         this->V = verticesNumber;
+        this->edgeCount = edgeNumber;
         this->initGraph(verticesNumber);
     }
 
