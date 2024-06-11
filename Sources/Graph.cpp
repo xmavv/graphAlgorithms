@@ -35,13 +35,6 @@ void Graph::initUnsignedGraph(int V) {
         incidenceMatrixCopy[i] = new int[0]();
     }
     unsignedEdgeCount = 0;
-
-    listSizesCopy = listSizes;
-    adjListCopy = adjList;
-    incidenceMatrixCopy = incidenceMatrix;
-
-    this->makeUndirectedList();
-    this->makeUndirectedMatrix();
 }
 
 Graph::~Graph() {
@@ -159,8 +152,11 @@ void Graph::loadGraphFromFile(string filename) {
         this->addEdgeList(initialVertex, finalVertex, weight);
         this->addEdgeMatrix(initialVertex, finalVertex, weight);
     }
+    cout<<1<<endl;
     this->copyIncidenceMatrix();
+    cout<<2<<endl;
     this->copyAdjList();
+    cout<<3<<endl;
 }
 
 void Graph::printAdjList() {
@@ -232,38 +228,62 @@ void Graph::makeUndirectedMatrix() {
 void Graph::copyAdjList() {
     adjListCopy = new pair<int, int>*[V];
     listSizesCopy = new int[V];
-    for (int i = 0; i < V; ++i) {
+    for (int i = 0; i < V; i++) {
         listSizesCopy[i] = listSizes[i];
         adjListCopy[i] = new pair<int, int>[listSizes[i]];
-        for (int j = 0; j < listSizes[i]; ++j) {
+        for (int j = 0; j < listSizes[i]; j++) {
             adjListCopy[i][j] = adjList[i][j];
         }
+    }
+
+    for (int k = 0; k < V; k++) {
+        cout << k << ": ";
+        for (int j = 0; j < listSizesCopy[k]; ++j) {
+            cout << "(" << adjListCopy[k][j].first << ", " << adjListCopy[k][j].second << ") ";
+        }
+        cout << endl;
     }
 }
 
 void Graph::copyIncidenceMatrix() {
     incidenceMatrixCopy = new int*[V];
-    for (int i = 0; i < V; ++i) {
-        incidenceMatrixCopy[i] = new int[V];
-        for (int j = 0; j < edgeCount; ++j) {
+    for (int i = 0; i < V; i++) {
+        incidenceMatrixCopy[i] = new int[edgeCount];
+        for (int j = 0; j < edgeCount; j++) {
             incidenceMatrixCopy[i][j] = incidenceMatrix[i][j];
         }
     }
 }
 
-
 void Graph::makeUndirectedList() {
-
     for (int u = 0; u < V; ++u) {
-        for (int i = 0; i < listSizesCopy[u]; ++i) {
-            int v = adjListCopy[u][i].first;
-            int weight = adjListCopy[u][i].second;
+        for (int i = 0; i < listSizes[u]; ++i) {
+            int v = adjList[u][i].first;
+            int weight = adjList[u][i].second;
 
-            addEdgeListCopy(v, u, weight);
+            bool exists = false;
+            for (int j = 0; j < listSizes[v]; ++j) {
+                if (adjList[v][j].first == u) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                addEdgeListCopy(v, u, weight);
+            }
         }
     }
-}
 
+    // Do debugowania, wyświetl listę po zakończeniu operacji
+    for (int i = 0; i < V; ++i) {
+        cout << i << ": ";
+        for (int j = 0; j < listSizesCopy[i]; ++j) {
+            cout << "(" << adjListCopy[i][j].first << ", " << adjListCopy[i][j].second << ") ";
+        }
+        cout << endl;
+    }
+}
 
 void Graph::primMSTList() {
     this->makeUndirectedList();
@@ -284,8 +304,7 @@ void Graph::primMSTList() {
     key[src] = 0;
 
     while (!pq.empty()) {
-        int u = pq.top();
-        pq.pop();
+        int u = pq.extractMin();
         inMST[u] = true;
 
         for (int i = 0; i < listSizesCopy[u]; ++i) {
@@ -312,7 +331,6 @@ void Graph::primMSTList() {
     delete[] parent;
     delete[] inMST;
 }
-
 
 void Graph::primMSTMatrix() {
     this->makeUndirectedMatrix();

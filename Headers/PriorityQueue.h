@@ -11,14 +11,15 @@
 
 class PriorityQueue {
     int* heap;
-    int* indices;
     int size;
     int capacity;
     void swap(int i, int j);
     void heapifyDown(int i);
     void heapifyUp(int i);
 public:
+    int* indices;
     explicit PriorityQueue(int capacity);
+    int extractMin();
     ~PriorityQueue();
     void push(int element);
     void pop();

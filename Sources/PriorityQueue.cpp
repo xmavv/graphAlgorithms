@@ -1,5 +1,4 @@
 #include "../Headers/PriorityQueue.h"
-#include "stdio.h"
 #include <iostream>
 #include <fstream>
 #include <random>
@@ -8,8 +7,8 @@
 #include <algorithm>
 
 void PriorityQueue::swap(int i, int j) {
-    swap(heap[i], heap[j]);
-    swap(indices[heap[i]], indices[heap[j]]);
+    std::swap(heap[i], heap[j]);
+    std::swap(indices[heap[i]], indices[heap[j]]);
 }
 
 void PriorityQueue::heapifyDown(int i) {
@@ -63,7 +62,8 @@ void PriorityQueue::push(int element) {
 void PriorityQueue::pop() {
     indices[heap[0]] = -1;
     heap[0] = heap[--size];
-    heapifyDown(0);
+    if (size > 0)
+        heapifyDown(0);
 }
 
 int PriorityQueue::top() {
@@ -78,4 +78,10 @@ void PriorityQueue::decreaseKey(int element, int new_value) {
     int i = indices[element];
     heap[i] = new_value;
     heapifyUp(i);
+}
+
+int PriorityQueue::extractMin() {
+    int minElement = heap[0];
+    pop();
+    return minElement;
 }
