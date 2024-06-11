@@ -22,6 +22,35 @@ void Graph::initGraph(int V) {
     edgeCount = 0;
 }
 
+void Graph::initUnsignedGraph(int V) {
+    adjListCopy = new pair<int, int>*[V];
+    listSizesCopy = new int[V]();
+    for (int i = 0; i < V; ++i) {
+        adjListCopy[i] = nullptr;
+    }
+
+    incidenceMatrixCopy = new int*[V];
+    for (int i = 0; i < V; ++i) {
+        incidenceMatrixCopy[i] = new int[0]();
+    }
+    cout<<1;
+
+    unsignedEdgeCount = 0;
+
+    cout<<2;
+
+    listSizesCopy = listSizes;
+    adjListCopy = adjList;
+    incidenceMatrixCopy = incidenceMatrix;
+
+    cout<<3;
+
+    this->makeUndirectedList();
+    this->makeUndirectedMatrix();
+
+    cout<<4;
+}
+
 Graph::~Graph() {
     for (int i = 0; i < V; ++i) {
         delete[] adjList[i];
@@ -125,6 +154,8 @@ void Graph::loadGraphFromFile(string filename) {
         this->addEdgeList(initialVertex, finalVertex, weight);
         this->addEdgeMatrix(initialVertex, finalVertex, weight);
     }
+
+    this->initUnsignedGraph(verticesNumber);
 }
 
 void Graph::printAdjList() {
@@ -158,14 +189,14 @@ void Graph::printIncidenceMatrix() {
     }
 }
 
-int Graph::findSet(int u, int parent[]) {
-    if (u != parent[u]) {
-        parent[u] = findSet(parent[u], parent);
+int Graph::findSet(int i, int* parent) {
+    if (i == parent[i]) {
+        return i;
     }
-    return parent[u];
+    return parent[i] = findSet(parent[i], parent);
 }
 
-void Graph::unionSets(int u, int v, int parent[], int rank[]) {
+void Graph::unionSets(int u, int v, int* parent, int* rank) {
     int rootU = findSet(u, parent);
     int rootV = findSet(v, parent);
 
@@ -181,8 +212,43 @@ void Graph::unionSets(int u, int v, int parent[], int rank[]) {
     }
 }
 
+void Graph::makeUndirectedMatrix() {
+    for (int u = 0; u < V; ++u) {
+        for (int v = u + 1; v < V; ++v) {
+            if (incidenceMatrixCopy[u][v] != 0) {
+                incidenceMatrixCopy[v][u] = incidenceMatrixCopy[u][v];
+            }
+        }
+    }
+}
+
+void Graph::makeUndirectedList() {
+    for (int u = 0; u < V; ++u) {
+        for (int i = 0; i < listSizesCopy[u]; ++i) {
+            int v = adjListCopy[u][i].first;
+            int weight = adjListCopy[u][i].second;
+            // Add edge from v to u if it doesn't exist already
+            bool exists = false;
+            for (int j = 0; j < listSizesCopy[v]; ++j) {
+                if (adjListCopy[v][j].first == u) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                adjListCopy[v][listSizesCopy[v]].first = u;
+                adjListCopy[v][listSizesCopy[v]].second = weight;
+                listSizesCopy[v]++;
+            }
+        }
+    }
+}
+
+
 void Graph::primMSTList() {
-    u.startCounter();
+    //makeUndirectedList(); // Ensure the graph is undirected
+    ** adjListCopy = ** adjList; // lista następników
+    *listSizesCopy =  *listSizes; // rozmiary list następników
 
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* key = new int[V];
@@ -195,26 +261,22 @@ void Graph::primMSTList() {
         inMST[i] = false;
     }
 
-    int src = 0;
+    int src = 0;  // Starting vertex
     pq.push({0, src});
     key[src] = 0;
-
-    int totalWeight = 0;
 
     while (!pq.empty()) {
         int u = pq.top().second;
         pq.pop();
 
         if (inMST[u]) continue;
-
         inMST[u] = true;
-        totalWeight += key[u];
 
-        for (int i = 0; i < listSizes[u]; ++i) {
-            int v = adjList[u][i].first;
-            int weight = adjList[u][i].second;
+        for (int i = 0; i < listSizesCopy[u]; ++i) {
+            int v = adjListCopy[u][i].first;
+            int weight = adjListCopy[u][i].second;
 
-            if (!inMST[v] && key[v] > weight) {
+            if (!inMST[v] && weight < key[v]) {
                 key[v] = weight;
                 pq.push({key[v], v});
                 parent[v] = u;
@@ -222,22 +284,23 @@ void Graph::primMSTList() {
         }
     }
 
-    double stop = u.getCounter();
-
+    int totalWeight = 0;
     cout << "MST using Prim's Algorithm (Adjacency List):" << endl;
     for (int i = 1; i < V; ++i) {
-        cout << parent[i] << " - " << i << endl;
+        cout << parent[i] << " - " << i << " : " << key[i] << endl;
+        totalWeight += key[i];
     }
     cout << "Total weight: " << totalWeight << endl;
-    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] key;
     delete[] parent;
     delete[] inMST;
 }
 
+
 void Graph::primMSTMatrix() {
-    u.startCounter();
+    //makeUndirectedMatrix(); // Ensure the graph is undirected
+    **incidenceMatrixCopy = **incidenceMatrix;
 
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* key = new int[V];
@@ -250,43 +313,36 @@ void Graph::primMSTMatrix() {
         inMST[i] = false;
     }
 
-    int src = 0;
+    int src = 0;  // Starting vertex
     pq.push({0, src});
     key[src] = 0;
-
-    int totalWeight = 0;
 
     while (!pq.empty()) {
         int u = pq.top().second;
         pq.pop();
 
         if (inMST[u]) continue;
-
         inMST[u] = true;
-        totalWeight += key[u];
 
+        //TU MOZE BYC COS Z TYM ZE WIERZCHOLKI A TAM POWINNY BYC KRAWEDZIE?
+        //I DODAJ ROBIENIE TYCH COPY W GENEROWANIU GRAFU
         for (int v = 0; v < edgeCount; ++v) {
-            int weight = incidenceMatrix[u][v];
-            if (weight > 0) {
-                for (int w = 0; w < V; ++w) {
-                    if (w != u && incidenceMatrix[w][v] == -weight && !inMST[w] && key[w] > weight) {
-                        key[w] = weight;
-                        pq.push({key[w], w});
-                        parent[w] = u;
-                    }
-                }
+            cout<<v<<endl;
+            if (incidenceMatrixCopy[u][v] != 0 && !inMST[v] && incidenceMatrixCopy[u][v] < key[v]) {
+                key[v] = abs(incidenceMatrixCopy[u][v]);
+                pq.push({key[v], v});
+                parent[v] = u;
             }
         }
     }
 
-    double stop = u.getCounter();
-
+    int totalWeight = 0;
     cout << "MST using Prim's Algorithm (Incidence Matrix):" << endl;
     for (int i = 1; i < V; ++i) {
-        cout << parent[i] << " - " << i << endl;
+        cout << parent[i] << " - " << i << " : " << key[i] << endl;
+        totalWeight += key[i];
     }
     cout << "Total weight: " << totalWeight << endl;
-    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] key;
     delete[] parent;

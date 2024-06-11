@@ -14,13 +14,20 @@ class Graph {
 private:
     int V; // liczba wierzchołków
     int edgeCount;
+    int unsignedEdgeCount;
     pair<int, int>** adjList; // lista następników
     int* listSizes; // rozmiary list następników
+    pair<int, int>** adjListCopy;
+    int* listSizesCopy;
     int** incidenceMatrix; // macierz incydencji
+    int** incidenceMatrixCopy;
     int findSet(int i, int* parent);
     void unionSets(int u, int v, int* parent, int* rank);
     void initGraph(int V);
+    void initUnsignedGraph(int V);
     Utilities u;
+    void makeUndirectedMatrix();
+    void makeUndirectedList();
 
 public:
     Graph(int V);
