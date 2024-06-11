@@ -9,4 +9,6 @@ add_executable(graphAlgorithms main.cpp
         Sources/Menu.cpp
         Sources/Graph.cpp
         Sources/Utilities.cpp
+        Sources/PriorityQueue.cpp
+        Headers/PriorityQueue.h
 )

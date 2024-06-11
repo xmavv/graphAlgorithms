@@ -1,5 +1,6 @@
 #include "../Headers/Graph.h"
 #include "../Headers/Utilities.h"
+#include "../Headers/PriorityQueue.h"
 #include "time.h"
 #include <algorithm>
 
@@ -33,22 +34,14 @@ void Graph::initUnsignedGraph(int V) {
     for (int i = 0; i < V; ++i) {
         incidenceMatrixCopy[i] = new int[0]();
     }
-    cout<<1;
-
     unsignedEdgeCount = 0;
-
-    cout<<2;
 
     listSizesCopy = listSizes;
     adjListCopy = adjList;
     incidenceMatrixCopy = incidenceMatrix;
 
-    cout<<3;
-
     this->makeUndirectedList();
     this->makeUndirectedMatrix();
-
-    cout<<4;
 }
 
 Graph::~Graph() {
@@ -70,6 +63,17 @@ void Graph::addEdgeList(int u, int v, int weight) {
     delete[] adjList[u];
     adjList[u] = newAdjU;
     listSizes[u]++;
+}
+
+void Graph::addEdgeListCopy(int u, int v, int weight) {
+    pair<int, int>* newAdjU = new pair<int, int>[listSizesCopy[u] + 1];
+    for (int i = 0; i < listSizesCopy[u]; ++i) {
+        newAdjU[i] = adjListCopy[u][i];
+    }
+    newAdjU[listSizesCopy[u]] = make_pair(v, weight);
+    delete[] adjListCopy[u];
+    adjListCopy[u] = newAdjU;
+    listSizesCopy[u]++;
 }
 
 void Graph::addEdgeMatrix(int u, int v, int weight) {
@@ -154,8 +158,8 @@ void Graph::loadGraphFromFile(string filename) {
         this->addEdgeList(initialVertex, finalVertex, weight);
         this->addEdgeMatrix(initialVertex, finalVertex, weight);
     }
-
-    this->initUnsignedGraph(verticesNumber);
+    this->copyIncidenceMatrix();
+    this->copyAdjList();
 }
 
 void Graph::printAdjList() {
@@ -213,44 +217,57 @@ void Graph::unionSets(int u, int v, int* parent, int* rank) {
 }
 
 void Graph::makeUndirectedMatrix() {
-    for (int u = 0; u < V; ++u) {
-        for (int v = u + 1; v < V; ++v) {
-            if (incidenceMatrixCopy[u][v] != 0) {
-                incidenceMatrixCopy[v][u] = incidenceMatrixCopy[u][v];
-            }
+    for(int i=0; i<V; i++){
+        for(int j=0; j<edgeCount; j++){
+            if (incidenceMatrixCopy[i][j] == 0) continue;
+
+            incidenceMatrixCopy[i][j] = abs(incidenceMatrixCopy[i][j]);
+        }
+    }
+
+
+}
+
+void Graph::copyAdjList() {
+    adjListCopy = new pair<int, int>*[V];
+    listSizesCopy = new int[V];
+    for (int i = 0; i < V; ++i) {
+        listSizesCopy[i] = listSizes[i];
+        adjListCopy[i] = new pair<int, int>[listSizes[i]];
+        for (int j = 0; j < listSizes[i]; ++j) {
+            adjListCopy[i][j] = adjList[i][j];
         }
     }
 }
 
+void Graph::copyIncidenceMatrix() {
+    incidenceMatrixCopy = new int*[V];
+    for (int i = 0; i < V; ++i) {
+        incidenceMatrixCopy[i] = new int[V];
+        for (int j = 0; j < edgeCount; ++j) {
+            incidenceMatrixCopy[i][j] = incidenceMatrix[i][j];
+        }
+    }
+}
+
+
 void Graph::makeUndirectedList() {
+
     for (int u = 0; u < V; ++u) {
         for (int i = 0; i < listSizesCopy[u]; ++i) {
             int v = adjListCopy[u][i].first;
             int weight = adjListCopy[u][i].second;
-            // Add edge from v to u if it doesn't exist already
-            bool exists = false;
-            for (int j = 0; j < listSizesCopy[v]; ++j) {
-                if (adjListCopy[v][j].first == u) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                adjListCopy[v][listSizesCopy[v]].first = u;
-                adjListCopy[v][listSizesCopy[v]].second = weight;
-                listSizesCopy[v]++;
-            }
+
+            addEdgeListCopy(v, u, weight);
         }
     }
 }
 
 
 void Graph::primMSTList() {
-    //makeUndirectedList(); // Ensure the graph is undirected
-    ** adjListCopy = ** adjList; // lista następników
-    *listSizesCopy =  *listSizes; // rozmiary list następników
+    this->makeUndirectedList();
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    PriorityQueue pq(V);
     int* key = new int[V];
     int* parent = new int[V];
     bool* inMST = new bool[V];
@@ -261,25 +278,23 @@ void Graph::primMSTList() {
         inMST[i] = false;
     }
 
-    int src = 0;  // Starting vertex
-    pq.push({0, src});
+    int src = 0;
+    pq.push(src);
     key[src] = 0;
 
     while (!pq.empty()) {
-        int u = pq.top().second;
+        int u = pq.top();
         pq.pop();
-
-        if (inMST[u]) continue;
         inMST[u] = true;
 
         for (int i = 0; i < listSizesCopy[u]; ++i) {
             int v = adjListCopy[u][i].first;
             int weight = adjListCopy[u][i].second;
 
-            if (!inMST[v] && weight < key[v]) {
+            if (!inMST[v] && key[v] > weight) {
                 key[v] = weight;
-                pq.push({key[v], v});
                 parent[v] = u;
+                pq.push(v);
             }
         }
     }
@@ -299,10 +314,8 @@ void Graph::primMSTList() {
 
 
 void Graph::primMSTMatrix() {
-    //makeUndirectedMatrix(); // Ensure the graph is undirected
-    **incidenceMatrixCopy = **incidenceMatrix;
+    this->makeUndirectedMatrix();
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     int* key = new int[V];
     int* parent = new int[V];
     bool* inMST = new bool[V];
@@ -313,34 +326,40 @@ void Graph::primMSTMatrix() {
         inMST[i] = false;
     }
 
-    int src = 0;  // Starting vertex
-    pq.push({0, src});
-    key[src] = 0;
+    key[0] = 0;
+    int totalWeight = 0;
 
-    while (!pq.empty()) {
-        int u = pq.top().second;
-        pq.pop();
+    for (int count = 0; count < V - 1; ++count) {
+        int minKey = INT_MAX, u = -1;
 
-        if (inMST[u]) continue;
+        for (int i = 0; i < V; ++i) {
+            if (!inMST[i] && key[i] < minKey) {
+                minKey = key[i];
+                u = i;
+            }
+        }
+
         inMST[u] = true;
 
-        //TU MOZE BYC COS Z TYM ZE WIERZCHOLKI A TAM POWINNY BYC KRAWEDZIE?
-        //I DODAJ ROBIENIE TYCH COPY W GENEROWANIU GRAFU
-        for (int v = 0; v < edgeCount; ++v) {
-            cout<<v<<endl;
-            if (incidenceMatrixCopy[u][v] != 0 && !inMST[v] && incidenceMatrixCopy[u][v] < key[v]) {
-                key[v] = abs(incidenceMatrixCopy[u][v]);
-                pq.push({key[v], v});
-                parent[v] = u;
+        for (int e = 0; e < edgeCount; ++e) {
+            int weight = incidenceMatrixCopy[u][e];
+            if (weight > 0) {
+                for (int v = 0; v < V; ++v) {
+                    if (incidenceMatrixCopy[v][e] > 0 && v != u && !inMST[v] && weight < key[v]) {
+                        key[v] = weight;
+                        parent[v] = u;
+                    }
+                }
             }
         }
     }
 
-    int totalWeight = 0;
     cout << "MST using Prim's Algorithm (Incidence Matrix):" << endl;
     for (int i = 1; i < V; ++i) {
-        cout << parent[i] << " - " << i << " : " << key[i] << endl;
-        totalWeight += key[i];
+        if (parent[i] != -1) {
+            cout << parent[i] << " - " << i << " : " << key[i] << endl;
+            totalWeight += key[i];
+        }
     }
     cout << "Total weight: " << totalWeight << endl;
 

@@ -28,6 +28,8 @@ private:
     Utilities u;
     void makeUndirectedMatrix();
     void makeUndirectedList();
+    void copyAdjList();
+    void copyIncidenceMatrix();
 
 public:
     Graph(int V);
@@ -36,6 +38,7 @@ public:
     void printAdjList();
     void printIncidenceMatrix();
     void addEdgeList(int u, int v, int weight);
+    void addEdgeListCopy(int u, int v, int weight);
     void addEdgeMatrix(int u, int v, int cost);
     void loadGraphFromFile(string filename);
     void primMSTList();

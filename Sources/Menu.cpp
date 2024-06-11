@@ -80,10 +80,6 @@ void Menu::chooseAlgorithm() {
 
             if(userChoice == 1) g.primMSTList();
             if(userChoice == 2) g.primMSTMatrix();
-            else {
-                cout<<"niepoprawny wybor"<<endl;
-                continue;
-            }
         }
         else if(userChoice == 2) {
             cout<<"1. lista"<<endl;
