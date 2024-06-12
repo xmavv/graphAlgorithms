@@ -62,8 +62,8 @@ void Menu::chooseAlgorithm() {
         cout <<endl<<endl<<("--------------------MENU-2--------------------")<<endl;
         cout << "1. MST PRIM" << endl;
         cout << "2. MST KRUSKAL" << endl;
-        cout << "3. DFS BELLMAN FORD" << endl;
-        cout << "4. DFS DIJKSTRY" << endl;
+        cout << "3. SP BELLMAN FORD" << endl;
+        cout << "4. SP DIJKSTRY" << endl;
         cout << "5. zobacz graf" << endl;
         cout << "lub: " << endl << endl;
         cout << "9. wyjdz do menu-1" << endl;
