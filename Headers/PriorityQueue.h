@@ -10,22 +10,25 @@
 
 
 class PriorityQueue {
-    int* heap;
-    int size;
-    int capacity;
-    void swap(int i, int j);
-    void heapifyDown(int i);
-    void heapifyUp(int i);
 public:
-    int* indices;
-    explicit PriorityQueue(int capacity);
-    int extractMin();
+    PriorityQueue(int capacity);
     ~PriorityQueue();
     void push(int element);
     void pop();
     int top();
-    bool empty();
+    bool empty() const;
     void decreaseKey(int element, int new_value);
+    int extractMin();
+
+private:
+    void swap(int i, int j);
+    void heapifyDown(int i);
+    void heapifyUp(int i);
+
+    std::pair<int, int>* heap;  // Pair to store (distance, vertex)
+    int* indices;
+    int capacity;
+    int size;
 };
 
 

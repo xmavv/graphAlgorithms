@@ -507,7 +507,7 @@ void Graph::kruskalMSTMatrix() {
 void Graph::dijkstraSPList(int src) {
     u.startCounter();
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    PriorityQueue pq(V);
     int* dist = new int[V];
     bool* visited = new bool[V];
 
@@ -516,12 +516,12 @@ void Graph::dijkstraSPList(int src) {
         visited[i] = false;
     }
 
-    pq.push({0, src});
     dist[src] = 0;
+    pq.push(src);
+    pq.decreaseKey(src, 0);
 
     while (!pq.empty()) {
-        int u = pq.top().second;
-        pq.pop();
+        int u = pq.extractMin();
 
         if (visited[u]) continue;
 
@@ -533,7 +533,8 @@ void Graph::dijkstraSPList(int src) {
 
             if (!visited[v] && dist[u] + weight < dist[v]) {
                 dist[v] = dist[u] + weight;
-                pq.push({dist[v], v});
+                pq.push(v);
+                pq.decreaseKey(v, dist[v]);
             }
         }
     }
@@ -552,7 +553,7 @@ void Graph::dijkstraSPList(int src) {
 void Graph::dijkstraSPMatrix(int src) {
     u.startCounter();
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    PriorityQueue pq(V);
     int* dist = new int[V];
     bool* visited = new bool[V];
 
@@ -561,12 +562,12 @@ void Graph::dijkstraSPMatrix(int src) {
         visited[i] = false;
     }
 
-    pq.push({0, src});
     dist[src] = 0;
+    pq.push(src);
+    pq.decreaseKey(src, 0);
 
     while (!pq.empty()) {
-        int u = pq.top().second;
-        pq.pop();
+        int u = pq.extractMin();
 
         if (visited[u]) continue;
 
@@ -578,7 +579,8 @@ void Graph::dijkstraSPMatrix(int src) {
                 for (int w = 0; w < V; ++w) {
                     if (w != u && incidenceMatrix[w][v] == -weight && !visited[w] && dist[u] + weight < dist[w]) {
                         dist[w] = dist[u] + weight;
-                        pq.push({dist[w], w});
+                        pq.push(w);
+                        pq.decreaseKey(w, dist[w]);
                     }
                 }
             }
