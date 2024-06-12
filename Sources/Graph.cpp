@@ -38,13 +38,13 @@ void Graph::initUnsignedGraph(int V) {
 }
 
 Graph::~Graph() {
-    for (int i = 0; i < V; ++i) {
+    /*for (int i = 0; i < V; ++i) {
         delete[] adjList[i];
         delete[] incidenceMatrix[i];
     }
     delete[] adjList;
     delete[] incidenceMatrix;
-    delete[] listSizes;
+    delete[] listSizes;*/
 }
 
 void Graph::addEdgeList(int u, int v, int weight) {
@@ -236,13 +236,13 @@ void Graph::copyAdjList() {
         }
     }
 
-    for (int k = 0; k < V; k++) {
+    /*for (int k = 0; k < V; k++) {
         cout << k << ": ";
         for (int j = 0; j < listSizesCopy[k]; ++j) {
             cout << "(" << adjListCopy[k][j].first << ", " << adjListCopy[k][j].second << ") ";
         }
         cout << endl;
-    }
+    }*/
 }
 
 void Graph::copyIncidenceMatrix() {
@@ -276,13 +276,13 @@ void Graph::makeUndirectedList() {
     }
 
     // Do debugowania, wyświetl listę po zakończeniu operacji
-    for (int i = 0; i < V; ++i) {
+    /*for (int i = 0; i < V; ++i) {
         cout << i << ": ";
         for (int j = 0; j < listSizesCopy[i]; ++j) {
             cout << "(" << adjListCopy[i][j].first << ", " << adjListCopy[i][j].second << ") ";
         }
         cout << endl;
-    }
+    }*/
 }
 
 
@@ -294,7 +294,7 @@ void Graph::makeUndirectedList() {
 
 
 
-void Graph::primMSTList() {
+double Graph::primMSTList() {
     this->makeUndirectedList();
 
     u.startCounter();
@@ -330,21 +330,23 @@ void Graph::primMSTList() {
     }
     double stop = u.getCounter();
 
-    int totalWeight = 0;
+    /*int totalWeight = 0;
     cout << "MST using Prim's Algorithm (Adjacency List):" << endl;
     for (int i = 1; i < V; ++i) {
         cout << parent[i] << " - " << i << " : " << key[i] << endl;
         totalWeight += key[i];
     }
     cout << "Total weight: " << totalWeight << endl;
-    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl; */
 
-    delete[] key;
-    delete[] parent;
-    delete[] inMST;
+//    delete[] key;
+//    delete[] parent;
+//    delete[] inMST;
+
+    return stop;
 }
 
-void Graph::primMSTMatrix() {
+double Graph::primMSTMatrix() {
     this->makeUndirectedMatrix();
 
     u.startCounter();
@@ -386,8 +388,9 @@ void Graph::primMSTMatrix() {
         }
     }
     double stop = u.getCounter();
+    return stop;
 
-    cout << "MST using Prim's Algorithm (Incidence Matrix):" << endl;
+    /*cout << "MST using Prim's Algorithm (Incidence Matrix):" << endl;
     for (int i = 1; i < V; ++i) {
         if (parent[i] != -1) {
             cout << parent[i] << " - " << i << " : " << key[i] << endl;
@@ -399,10 +402,10 @@ void Graph::primMSTMatrix() {
 
     delete[] key;
     delete[] parent;
-    delete[] inMST;
+    delete[] inMST;*/
 }
 
-void Graph::kruskalMSTList() {
+double Graph::kruskalMSTList() {
     u.startCounter();
 
     pair<int, pair<int, int>>* edges = new pair<int, pair<int, int>>[V * V];
@@ -424,6 +427,7 @@ void Graph::kruskalMSTList() {
         parent[i] = i;
     }
     double stop = u.getCounter();
+    return stop;
 
     int totalWeight = 0;
 
@@ -448,7 +452,7 @@ void Graph::kruskalMSTList() {
     delete[] rank;
 }
 
-void Graph::kruskalMSTMatrix() {
+double Graph::kruskalMSTMatrix() {
     u.startCounter();
 
     pair<int, pair<int, int>>* edges = new pair<int, pair<int, int>>[edgeCount];
@@ -480,6 +484,7 @@ void Graph::kruskalMSTMatrix() {
         parent[i] = i;
     }
     double stop = u.getCounter();
+    return stop;
 
     int totalWeight = 0;
 
@@ -504,7 +509,7 @@ void Graph::kruskalMSTMatrix() {
     delete[] rank;
 }
 
-void Graph::dijkstraSPList(int src) {
+double Graph::dijkstraSPList(int src) {
     u.startCounter();
 
     PriorityQueue pq(V);
@@ -539,6 +544,7 @@ void Graph::dijkstraSPList(int src) {
         }
     }
     double stop = u.getCounter();
+    return stop;
 
     cout << "Shortest paths using Dijkstra's Algorithm from vertex " << src << " (Adjacency List):" << endl;
     for (int i = 0; i < V; ++i) {
@@ -550,7 +556,7 @@ void Graph::dijkstraSPList(int src) {
     delete[] visited;
 }
 
-void Graph::dijkstraSPMatrix(int src) {
+double Graph::dijkstraSPMatrix(int src) {
     u.startCounter();
 
     PriorityQueue pq(V);
@@ -587,6 +593,7 @@ void Graph::dijkstraSPMatrix(int src) {
         }
     }
     double stop = u.getCounter();
+    return stop;
 
     cout << "Shortest paths using Dijkstra's Algorithm from vertex " << src << " (Incidence Matrix):" << endl;
     for (int i = 0; i < V; ++i) {
@@ -598,7 +605,7 @@ void Graph::dijkstraSPMatrix(int src) {
     delete[] visited;
 }
 
-void Graph::bellmanFordSPList(int src) {
+double Graph::bellmanFordSPList(int src) {
     u.startCounter();
 
     int* dist = new int[V];
@@ -629,11 +636,12 @@ void Graph::bellmanFordSPList(int src) {
             if (dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
                 cout << "Graph contains negative weight cycle" << endl;
                 delete[] dist;
-                return;
+                return 0;
             }
         }
     }
     double stop = u.getCounter();
+    return stop;
 
     cout << "Shortest paths using Bellman-Ford Algorithm from vertex " << src << " (Adjacency List):" << endl;
     for (int i = 0; i < V; ++i) {
@@ -644,7 +652,7 @@ void Graph::bellmanFordSPList(int src) {
     delete[] dist;
 }
 
-void Graph::bellmanFordSPMatrix(int src) {
+double Graph::bellmanFordSPMatrix(int src) {
     u.startCounter();
 
     int* dist = new int[V];
@@ -677,13 +685,14 @@ void Graph::bellmanFordSPMatrix(int src) {
                     if (incidenceMatrix[w][v] == -weight && dist[u] != INT_MAX && dist[u] + weight < dist[w]) {
                         cout << "Graph contains negative weight cycle" << endl;
                         delete[] dist;
-                        return;
+                        return 0;
                     }
                 }
             }
         }
     }
     double stop = u.getCounter();
+    return stop;
 
     cout << "Shortest paths using Bellman-Ford Algorithm from vertex " << src << " (Incidence Matrix):" << endl;
     for (int i = 0; i < V; ++i) {

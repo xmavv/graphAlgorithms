@@ -5,7 +5,8 @@ using namespace std;
 int main() {
 
     Menu menu(Graph(0));
-    menu.start();
+//    menu.start();
+    menu.test();
 
 //    Graph g(10);
 //    g.generateRandomGraph(0.5, 10);

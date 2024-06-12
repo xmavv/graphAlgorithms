@@ -11,12 +11,13 @@ class Menu {
     Graph g;
     void generateGraph();
     void printGraph();
-    void chooseAlgorithm();
+    double chooseAlgorithm();
     void loadFromFile();
 
 public:
     Menu(Graph g);
     void start();
+    void test();
 };
 
 

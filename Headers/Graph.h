@@ -41,14 +41,14 @@ public:
     void addEdgeListCopy(int u, int v, int weight);
     void addEdgeMatrix(int u, int v, int cost);
     void loadGraphFromFile(string filename);
-    void primMSTList();
-    void primMSTMatrix();
-    void kruskalMSTList();
-    void kruskalMSTMatrix();
-    void bellmanFordSPList(int src);
-    void bellmanFordSPMatrix(int src);
-    void dijkstraSPMatrix(int src);
-    void dijkstraSPList(int src);
+    double primMSTList();
+    double primMSTMatrix();
+    double kruskalMSTList();
+    double kruskalMSTMatrix();
+    double bellmanFordSPList(int src);
+    double bellmanFordSPMatrix(int src);
+    double dijkstraSPMatrix(int src);
+    double dijkstraSPList(int src);
 };
 
 
