@@ -113,6 +113,9 @@ void Graph::generateRandomGraph(float density, int maxCost) {
             edgeCount++;
         }
     }
+
+    this->copyIncidenceMatrix();
+    this->copyAdjList();
 }
 
 void Graph::loadGraphFromFile(string filename) {
@@ -152,11 +155,8 @@ void Graph::loadGraphFromFile(string filename) {
         this->addEdgeList(initialVertex, finalVertex, weight);
         this->addEdgeMatrix(initialVertex, finalVertex, weight);
     }
-    cout<<1<<endl;
     this->copyIncidenceMatrix();
-    cout<<2<<endl;
     this->copyAdjList();
-    cout<<3<<endl;
 }
 
 void Graph::printAdjList() {
@@ -285,9 +285,17 @@ void Graph::makeUndirectedList() {
     }
 }
 
+
+
+// CZASEM TA LISTA ZLE ZWRACA DROGE, MOZE TO BYC PRZEZ TO ZE DZIWNIE SIE PRINTUJE DLA WIERZCHLOKA
+// 0 LISTA W SENSIE NIE WIDAC NASTEPNIKOW TO MOZESZ NAPRAWIC
+
+
+
 void Graph::primMSTList() {
     this->makeUndirectedList();
 
+    u.startCounter();
     PriorityQueue pq(V);
     int* key = new int[V];
     int* parent = new int[V];
@@ -318,6 +326,7 @@ void Graph::primMSTList() {
             }
         }
     }
+    double stop = u.getCounter();
 
     int totalWeight = 0;
     cout << "MST using Prim's Algorithm (Adjacency List):" << endl;
@@ -326,6 +335,7 @@ void Graph::primMSTList() {
         totalWeight += key[i];
     }
     cout << "Total weight: " << totalWeight << endl;
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] key;
     delete[] parent;
@@ -335,6 +345,7 @@ void Graph::primMSTList() {
 void Graph::primMSTMatrix() {
     this->makeUndirectedMatrix();
 
+    u.startCounter();
     int* key = new int[V];
     int* parent = new int[V];
     bool* inMST = new bool[V];
@@ -372,6 +383,7 @@ void Graph::primMSTMatrix() {
             }
         }
     }
+    double stop = u.getCounter();
 
     cout << "MST using Prim's Algorithm (Incidence Matrix):" << endl;
     for (int i = 1; i < V; ++i) {
@@ -381,6 +393,7 @@ void Graph::primMSTMatrix() {
         }
     }
     cout << "Total weight: " << totalWeight << endl;
+    cout << "Total time: " << to_string(stop) + "[ms]" << endl;
 
     delete[] key;
     delete[] parent;
@@ -408,6 +421,7 @@ void Graph::kruskalMSTList() {
     for (int i = 0; i < V; ++i) {
         parent[i] = i;
     }
+    double stop = u.getCounter();
 
     int totalWeight = 0;
 
@@ -423,7 +437,6 @@ void Graph::kruskalMSTList() {
             unionSets(u, v, parent, rank);
         }
     }
-    double stop = u.getCounter();
 
     cout << "Total weight: " << totalWeight << endl;
     cout << "Total time: " << to_string(stop) + "[ms]" << endl;
@@ -464,6 +477,7 @@ void Graph::kruskalMSTMatrix() {
     for (int i = 0; i < V; ++i) {
         parent[i] = i;
     }
+    double stop = u.getCounter();
 
     int totalWeight = 0;
 
@@ -479,7 +493,6 @@ void Graph::kruskalMSTMatrix() {
             unionSets(u, v, parent, rank);
         }
     }
-    double stop = u.getCounter();
 
     cout << "Total weight: " << totalWeight << endl;
     cout << "Total time: " << to_string(stop) + "[ms]" << endl;
